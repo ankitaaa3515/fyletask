@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub User Info</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      input {
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #userInfo,
+      #repoList {
+        margin-top: 20px;
+      }
+
+      #repoList div {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .pagination button {
+        margin: 0 5px;
+        cursor: pointer;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>GitHub User Info</h1>
+
+    <div>
+      <label for="username">Enter GitHub Username:</label>
+      <input type="text" id="username" placeholder="Enter username" />
+      <button onclick="fetchUserInfo()">Get Info</button>
+    </div>
+
+    <div id="userInfo">
+      <!-- User information will be displayed here -->
+    </div>
+
+    <div id="repoList">
+      <!-- Repository information will be displayed here -->
+    </div>
+
+    <div class="pagination" id="pagination">
+      <!-- Static Pagination controls -->
+      <button onclick="changePage(1)">1</button>
+      <button onclick="changePage(2)">2</button>
+      <button onclick="changePage(3)">3</button>
+      <button onclick="changePage(4)">4</button>
+      <button onclick="changePage(5)">5</button>
+      <button onclick="changePage(6)">6</button>
+      <button onclick="changePage(7)">7</button>
+      <!-- Add more static buttons as needed -->
+    </div>
+
+    <script>
+      let currentPage = 1;
+      const reposPerPage = 10;
+
+      function fetchUserInfo() {
+        // GitHub username
+        const username = document.getElementById("username").value;
+
+        // GitHub API endpoint for user information
+        const userApiUrl = `https://api.github.com/users/${username}`;
+
+        // GitHub API endpoint for user's repositories
+        const repoApiUrl = `https://api.github.com/users/${username}/repos?page=${currentPage}&per_page=${reposPerPage}`;
+
+        // Fetch user information
+        fetch(userApiUrl)
+          .then((response) => response.json())
+          .then((user) => {
+            // Display user information
+            document.getElementById("userInfo").innerHTML = `
+                        <h2>${user.name}</h2>
+                        <p>Login: ${user.login}</p>
+                        <p>Public Repositories: ${user.public_repos}</p>
+                        <img src="${user.avatar_url}" alt="${user.login}'s avatar" width="100" height="100">
+                    `;
+          })
+          .catch((error) =>
+            console.error("Error fetching user information:", error)
+          );
+
+        // Fetch repository information
+        fetch(repoApiUrl)
+          .then((response) => response.json())
+          .then((repos) => {
+            // Display repository information
+            const repoList = document.getElementById("repoList");
+            repoList.innerHTML = "<h2>Repositories</h2>";
+
+            repos.forEach((repo) => {
+              repoList.innerHTML += `
+                            <div>
+                                <h3>${repo.name}</h3>
+                                <p>${
+                                  repo.description || "No description available"
+                                }</p>
+                                <p>Language: ${
+                                  repo.language || "Not specified"
+                                }</p>
+                            </div>
+                        `;
+            });
+          })
+          .catch((error) =>
+            console.error("Error fetching repository information:", error)
+          );
+      }
+
+      function changePage(newPage) {
+        if (newPage > 0) {
+          currentPage = newPage;
+          fetchUserInfo();
+        }
+      }
+    </script>
+  </body>
+</html>
