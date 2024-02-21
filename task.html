@@ -98,20 +98,20 @@
       const reposPerPage = 10;
 
       function fetchUserInfo() {
-        // GitHub username
+       
         const username = document.getElementById("username").value;
 
-        // GitHub API endpoint for user information
+        
         const userApiUrl = `https://api.github.com/users/${username}`;
 
-        // GitHub API endpoint for user's repositories
+        
         const repoApiUrl = `https://api.github.com/users/${username}/repos?page=${currentPage}&per_page=${reposPerPage}`;
 
-        // Fetch user information
+        
         fetch(userApiUrl)
           .then((response) => response.json())
           .then((user) => {
-            // Display user information
+            
             document.getElementById("userInfo").innerHTML = `
                         <h2>${user.name}</h2>
                         <p>Login: ${user.login}</p>
@@ -123,11 +123,11 @@
             console.error("Error fetching user information:", error)
           );
 
-        // Fetch repository information
+       
         fetch(repoApiUrl)
           .then((response) => response.json())
           .then((repos) => {
-            // Display repository information
+            
             const repoList = document.getElementById("repoList");
             repoList.innerHTML = "<h2>Repositories</h2>";
 
